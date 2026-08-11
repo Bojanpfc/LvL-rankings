@@ -11,23 +11,34 @@
         body.light { 
             --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --header: #e2e8f0; --accent: #2563eb; --row-bg: #f1f5f9; 
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding: 10px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 900px; background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid var(--header); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        h1 { font-size: 1.2rem; color: var(--accent); text-transform: uppercase; margin: 0; }
-        button { cursor: pointer; padding: 6px 12px; border-radius: 6px; border: none; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.8rem; }
-        body.light button { color: #fff; }
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 6px; white-space: nowrap; }
-        th { color: #94a3b8; font-size: 0.7rem; padding: 8px 6px; text-transform: uppercase; text-align: center; }
-        th:nth-child(2) { text-align: left; }
-        td { background: var(--row-bg); padding: 8px 6px; text-align: center; font-size: 0.85rem; }
-        td:nth-child(2) { text-align: left; font-weight: 500; }
-        tr td:first-child { border-radius: 6px 0 0 6px; font-weight: bold; color: var(--accent); }
-        tr td:last-child { border-radius: 0 6px 6px 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding: 5px; margin: 0; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 100%; background: var(--card); border-radius: 8px; padding: 10px; box-sizing: border-box; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        h1 { font-size: 1.1rem; color: var(--accent); text-transform: uppercase; margin: 0; }
+        button { cursor: pointer; padding: 5px 10px; border-radius: 6px; border: none; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.75rem; }
         
-        /* Bojenje poslednjih 5 mečeva */
-        .match-badge { display: inline-block; width: 24px; height: 24px; line-height: 24px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 0.75rem; margin: 0 1px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 4px; table-layout: fixed; }
+        th { color: #94a3b8; font-size: 0.65rem; padding: 6px 2px; text-transform: uppercase; text-align: center; overflow: hidden; }
+        th:nth-child(2) { text-align: left; }
+        
+        td { background: var(--row-bg); padding: 6px 2px; text-align: center; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+        td:nth-child(2) { text-align: left; font-weight: 500; }
+        
+        /* Širine kolona da sve stane na ekran */
+        th:nth-child(1), td:nth-child(1) { width: 8%; }  /* # */
+        th:nth-child(2), td:nth-child(2) { width: 28%; } /* Ime */
+        th:nth-child(3), td:nth-child(3) { width: 10%; } /* GP */
+        th:nth-child(4), td:nth-child(4) { width: 13%; } /* AVG */
+        th:nth-child(5), td:nth-child(5) { width: 10%; } /* MAX */
+        th:nth-child(6), td:nth-child(6) { width: 10%
+
+}; /* MIN */
+        th:nth-child(7), td:nth-child(7) { width: 21%; } /* Last 5 */
+
+        tr td:first-child { border-radius: 4px 0 0 4px; font-weight: bold; color: var(--accent); }
+        tr td:last-child { border-radius: 0 4px 4px 0; }
+        
+        .match-badge { display: inline-block; width: 16px; height: 18px; line-height: 18px; text-align: center; border-radius: 3px; font-weight: bold; font-size: 0.6rem; margin: 0 0.5px; }
         .bg-green { background-color: #166534; color: #4ade80; }
         .bg-red { background-color: #991b1b; color: #f87171; }
         body.light .bg-green { background-color: #dcfce7; color: #166534; }
@@ -39,18 +50,16 @@
 <div class="container">
     <div class="header-flex">
         <h1>Player Ranking</h1>
-        <button onclick="document.body.classList.toggle('light')">Light/Dark Mode</button>
+        <button onclick="document.body.classList.toggle('light')">Theme</button>
     </div>
-    <div class="table-wrapper">
-        <table id="rankingTable">
-            <thead>
-                <tr>
-                    <th>#</th><th>PLAYER</th><th>GP</th><th>AVG</th><th>MAX</th><th>MIN</th><th colspan="5">LAST 5 GAMES</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+    <table id="rankingTable">
+        <thead>
+            <tr>
+                <th>#</th><th>Player</th><th>GP</th><th>AVG</th><th>MAX</th><th>MIN</th><th>L5</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
 
 <script>
@@ -63,17 +72,16 @@
             const json = JSON.parse(data.substr(47).slice(0, -2));
             const tbody = document.querySelector('#rankingTable tbody');
             
-            // Preskačemo prvi red jer je zaglavlje u tabeli
             json.table.rows.forEach((row, index) => {
                 const player = row.c[0]?.v;
-                if (!player) return; // Ako je red prazan, preskoči
+                // Prekidamo petlju ili preskačemo ako je red prazan ili ako naiđemo na "Legend"
+                if (!player || player === "Legend") return;
 
                 const gp = row.c[1]?.v || '';
                 const goals = row.c[2]?.v ? Number(row.c[2].v).toFixed(2) : '';
                 const max = row.c[3]?.v || '';
                 const min = row.c[4]?.v || '';
 
-                // Poslednjih 5 mečeva (kolone F, G, H, I, J -> indeksi 5, 6, 7, 8, 9)
                 let matchesHtml = '';
                 for (let i = 5; i <= 9; i++) {
                     const val = row.c[i]?.v;
@@ -81,8 +89,6 @@
                         const score = Number(val);
                         const badgeClass = score >= 34 ? 'bg-green' : 'bg-red';
                         matchesHtml += `<span class="match-badge ${badgeClass}">${score}</span>`;
-                    } else {
-                        matchesHtml += `<span class="match-badge" style="background:transparent"></span>`;
                     }
                 }
 
@@ -94,7 +100,7 @@
                     <td style="font-weight:bold;">${goals}</td>
                     <td>${max}</td>
                     <td>${min}</td>
-                    <td colspan="5" style="text-align:center;">${matchesHtml}</td>
+                    <td>${matchesHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });

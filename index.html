@@ -7,15 +7,21 @@
     <style>
         :root { 
             --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --header: #334155; --accent: #fbbf24; --row-bg: #26364f; 
-            /* Dark mode boje za mečeve (jake) */
+            /* Dark mode boje za mečeve */
             --green-bg: #166534; --green-text: #4ade80;
             --red-bg: #991b1b; --red-text: #f87171;
+            /* Boje za MAX (narandžasta) i MIN (plava) u Dark mode-u */
+            --max-bg: #7c2d12; --max-text: #fdba74;
+            --min-bg: #1e3a8a; --min-text: #93c5fd;
         }
         body.light { 
             --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --header: #e2e8f0; --accent: #2563eb; --row-bg: #f1f5f9; 
-            /* Light mode boje za mečeve (blaže, pastelne, ne bodu oči) */
+            /* Light mode boje za mečeve (pastelne) */
             --green-bg: #e2f8eb; --green-text: #15803d;
             --red-bg: #fde8e8; --red-text: #b91c1c;
+            /* Boje za MAX i MIN u Light mode-u */
+            --max-bg: #ffedd5; --max-text: #c2410c;
+            --min-bg: #dbeafe; --min-text: #1d4ed8;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding: 4px; margin: 0; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 100%; background: var(--card); border-radius: 6px; padding: 8px; box-sizing: border-box; }
@@ -46,6 +52,10 @@
         .match-badge { display: inline-block; width: 14px; height: 16px; line-height: 16px; text-align: center; border-radius: 2px; font-weight: bold; font-size: 0.55rem; margin: 0 0.5px; }
         .bg-green { background-color: var(--green-bg); color: var(--green-text); }
         .bg-red { background-color: var(--red-bg); color: var(--red-text); }
+        
+        /* Klase za obojen MAX i MIN */
+        .max-badge { background-color: var(--max-bg); color: var(--max-text); font-weight: bold; border-radius: 3px; padding: 1px 3px; }
+        .min-badge { background-color: var(--min-bg); color: var(--min-text); font-weight: bold; border-radius: 3px; padding: 1px 3px; }
     </style>
 </head>
 <body>
@@ -75,7 +85,6 @@
             const json = JSON.parse(data.substr(47).slice(0, -2));
             const tbody = document.querySelector('#rankingTable tbody');
             
-            // Dinamički uzima sve redove gde postoji ime igrača (nema više ograničenja broja)
             const validRows = json.table.rows.filter(row => row.c[0]?.v && typeof row.c[0].v === 'string' && row.c[0].v.trim() !== "" && row.c[0].v !== "Player");
 
             validRows.forEach((row, index) => {
@@ -101,8 +110,8 @@
                     <td>${player}</td>
                     <td>${gp}</td>
                     <td style="font-weight:bold;">${goals}</td>
-                    <td>${max}</td>
-                    <td>${min}</td>
+                    <td><span class="max-badge">${max}</span></td>
+                    <td><span class="min-badge">${min}</span></td>
                     <td>${matchesHtml}</td>
                 `;
                 tbody.appendChild(tr);

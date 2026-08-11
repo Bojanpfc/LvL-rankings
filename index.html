@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --header: #334155; --accent: #fbbf24; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 800px; background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid #334155; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 20px; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { color: #94a3b8; font-size: 0.8rem; padding: 10px; text-transform: uppercase; }
+        td { background: #26364f; padding: 12px; text-align: center; }
+        tr td:first-child { border-radius: 8px 0 0 8px; }
+        tr td:last-child { border-radius: 0 8px 8px 0; }
+        .trend { font-weight: bold; }
+        .pos { color: #22c55e; } .neg { color: #ef4444; }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <h1>FC Mobile Ranking</h1>
+    <table id="rankingTable">
+        <thead>
+            <tr><th>#</th><th>PLAYER</th><th>GP</th><th>AVG</th><th>MAX</th><th>MIN</th><th>LAST 5</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    const SHEET_ID = '16OTm4bC-YKAoJl7Rsw8bQLfrdYvUsbZ94Vic65KcMEY';
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Ranking`;
+
+    fetch(URL).then(res => res.text()).then(data => {
+        const json = JSON.parse(data.substr(47).slice(0, -2));
+        const tbody = document.querySelector('#rankingTable tbody');
+        
+        json.table.rows.forEach((row, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td style="text-align:left">${row.c[0].v}</td>
+                <td>${row.c[1].v}</td>
+                <td>${Number(row.c[2].v).toFixed(1)}</td>
+                <td>${row.c[3].v}</td>
+                <td>${row.c[4].v}</td>
+                <td>${row.c[5].v}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+</script>
+</body>
+</html>
